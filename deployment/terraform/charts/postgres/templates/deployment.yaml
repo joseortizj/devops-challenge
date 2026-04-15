@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.microservice.name }}
+  name: {{ .Values.microservice.name }}
+  namespace: {{ .Values.microservice.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.microservice.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.microservice.name }}
+    spec:
+      containers:
+        - name: {{ .Values.microservice.name }}
+          image: {{ .Values.microservice.image }}
+          imagePullPolicy: Always
+          {{- if .Values.persistence.enabled }}
+          volumeMounts:
+          - name: postgres-volume-mount
+            mountPath: /var/lib/postgresql/data
+            subPath: postgres
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.microservice.name }}
+          env:
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: user
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: password
+          resources:
+            requests:
+              cpu: 60m
+              memory: 125Mi
+            limits:
+              cpu: 125m
+              memory: 256Mi
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      {{- if .Values.persistence.enabled }}
+      volumes:
+      - name: postgres-volume-mount
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+      {{- end }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1

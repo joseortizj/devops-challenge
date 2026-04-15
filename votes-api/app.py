@@ -97,7 +97,7 @@ def vote_endpoint():
             cursor = db.cursor()
             # Try to insert in the votes table, if voter already exists, update their vote
             cursor.execute(
-                "INSERT INTO vote (id, vote) VALUES (%s, %s) ON CONFLICT (id) DO UPDATE SET vote = EXCLUDED.vote",
+                "INSERT INTO votes (id, vote) VALUES (%s, %s) ON CONFLICT (id) DO UPDATE SET vote = EXCLUDED.vote",
                 (voter_id, vote),
             )
             db.commit()
