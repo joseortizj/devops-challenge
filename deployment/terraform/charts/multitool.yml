@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: multitool
+  name: multitool
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: multitool
+  template:
+    metadata:
+      labels:
+        app: multitool
+    spec:
+      containers:
+        - env:
+            - name: PORT
+              value: '80'
+          image: praqma/network-multitool:c3d4e04
+          imagePullPolicy: Always
+          name: multitool
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 60m
+              memory: 125Mi
+            limits:
+              cpu: 125m
+              memory: 256Mi
+          # livenessProbe:
+          #   httpGet:
+          #     path: /healthz
+          #     port: 80
+          #   initialDelaySeconds: 10
+          #   # Allow sufficient amount of time (180 seconds = periodSeconds * failureThreshold)
+          #   # for the registered shutdown handlers to run to completion.
+          #   periodSeconds: 30
+          #   failureThreshold: 3
+          #   successThreshold: 1
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1

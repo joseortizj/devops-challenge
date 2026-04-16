@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.microservice.name }}
+  namespace: {{ .Values.microservice.namespace }}
+spec:
+  ports:
+  - port: 80
+    targetPort: 4000
+    protocol: TCP
+  selector:
+    app: {{ .Values.microservice.name }}

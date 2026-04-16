@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.microservice.name }}
+  name: {{ .Values.microservice.name }}
+  namespace: {{ .Values.microservice.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.microservice.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.microservice.name }}
+    spec:
+      containers:
+        - name: {{ .Values.microservice.name }}
+          image: {{ .Values.microservice.image }}
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.microservice.name }}
+          resources:
+            requests:
+              cpu: 60m
+              memory: 125Mi
+            limits:
+              cpu: 125m
+              memory: 256Mi
+          # livenessProbe:
+          #   httpGet:
+          #     path: /healthz
+          #     port: 80
+          #   initialDelaySeconds: 10
+          #   # Allow sufficient amount of time (180 seconds = periodSeconds * failureThreshold)
+          #   # for the registered shutdown handlers to run to completion.
+          #   periodSeconds: 30
+          #   failureThreshold: 3
+          #   successThreshold: 1
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1

@@ -4,10 +4,13 @@ var socket = io.connect({ transports: ["polling"] });
 var bg1 = document.getElementById("background-stats-1");
 var bg2 = document.getElementById("background-stats-2");
 
-// Configuration
-const VOTE_API_HOST = window.location.hostname;
-const VOTE_API_PORT = "5001"; // Flask app port
-const VOTE_API_URL = `http://${VOTE_API_HOST}:${VOTE_API_PORT}`;
+// Old Configuration
+//const VOTE_API_HOST = window.location.hostname;
+//const VOTE_API_PORT = "5001"; // Flask app port
+//const VOTE_API_URL = `http://${VOTE_API_HOST}:${VOTE_API_PORT}`;
+
+// NEW CONFIGURATION:
+const VOTE_API_URL = "/api";
 
 app.controller("statsCtrl", function ($scope, $http) {
   $scope.aPercent = 50;

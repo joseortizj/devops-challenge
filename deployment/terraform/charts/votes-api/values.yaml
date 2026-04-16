@@ -1,0 +1,17 @@
+# Default values
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+microservice:
+  name: votes-api
+  namespace: default
+  env: prod
+  healthcheckPath: /healthz
+  image: "votes-api:latest"
+  PullPolicy: Always
+  profile: docker
+  type: ClusterIP
+  replicas: 1
+
+hpa:
+  minReplicas: 1
+  maxReplicas: 2

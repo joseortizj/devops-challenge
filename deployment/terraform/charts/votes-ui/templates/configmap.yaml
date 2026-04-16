@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.microservice.name }}
+  namespace: {{ .Values.microservice.namespace }}
+data:
+  ENV: "prod"
+  VOTES_API_HOST: "votes-api"
+  VOTES_API_PORT: "80"
+  PORT: "4000"
